@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kargov"
+version = "0.1.0"
+description = "Browser-agent video automation pipeline for recording web app demos, tutorials, and narrated operation videos."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "katsushi2441"}]
+dependencies = [
+  "browser-use>=0.1.0",
+  "edge-tts>=7.0.0",
+  "websockets>=12.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.5"]
+
+[project.scripts]
+kargov = "kargov.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["kargov*"]
