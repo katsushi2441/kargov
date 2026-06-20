@@ -9,8 +9,7 @@ This repository is the product folder itself. Local data can live here during de
 ```text
 kargov/
   app/         reusable Python package and pipeline logic
-  argo/        optional local checkout of the upstream Argo OSS project, ignored by Git
-  runs/        generated recordings, screenshots, narration, and final videos, ignored by Git
+  runs/        generated recordings, short edits, narration, and final videos, ignored by Git
   assets/      local fonts or private media assets, ignored by Git
   .venv/       local Python environment, ignored by Git
 ```
@@ -27,6 +26,9 @@ record
 refine
   optional local/OAuth CLI LLM rewrites narration and captions
 
+summarize
+  trims long recordings into a short demo-ready run
+
 narrate
   edge-tts creates per-scene narration audio
 
@@ -34,15 +36,9 @@ export
   ffmpeg aligns scenes to narration, burns captions, exports 16:9 and 9:16
 ```
 
-## Argo Integration Policy
+## Argo Inspiration
 
-The `argo/` directory is intentionally ignored. Use it as a local reference or vendor checkout while developing integrations, for example:
-
-```bash
-git clone https://github.com/shreyaskarnik/argo argo
-```
-
-Code that becomes part of `kargov` should be implemented in the `app/` package with clear attribution when needed. Generated data, copied experiments, and upstream working trees should stay out of this repository history.
+Argo was used as a design reference, not as a fork or copied codebase. `kargov` is a Python implementation built around the existing Kurage/browser-agent recording workflow. The Argo-inspired ideas are scene marks, narration alignment, subtitle overlays, and horizontal/vertical exports.
 
 ## Install
 
@@ -67,6 +63,11 @@ kargov pipeline \
   --intro "This is an automated product demo" \
   --outro "Thanks for watching" \
   --formats 16:9,9:16
+
+# Turn a long recording into a short demo-ready run.
+kargov summarize runs/run_xxxx --target-seconds 60 --max-steps 4
+kargov narrate runs/run_xxxx_short
+kargov export runs/run_xxxx_short --formats 16:9,9:16
 ```
 
 Outputs are written to `runs/<run>/` by default. `runs/` is ignored by Git.
@@ -90,7 +91,6 @@ Environment variables:
 
 Do not commit:
 
-- `argo/` upstream checkout
 - `runs/` outputs
 - cookies or browser profiles
 - generated videos/audio/screenshots

@@ -5,13 +5,14 @@
   kargov export  <run_dir> [--formats 16:9,9:16]
   kargov pipeline --task "..." [...]          record→narrate→export を一気通貫
   kargov validate <run_dir>
+  kargov summarize <run_dir>
   kargov doctor
 """
 import argparse, asyncio, json, shutil, subprocess, sys
 from pathlib import Path
 
 from . import config, scenes as scenes_mod
-from . import agent_run, narrate, export as export_mod, script_llm
+from . import agent_run, narrate, export as export_mod, script_llm, summarize as summarize_mod
 
 
 def _parse_cookies(specs: list[str]) -> list[dict]:
@@ -51,6 +52,18 @@ def cmd_narrate(a):
 def cmd_export(a):
     fmts = a.formats.split(",") if a.formats else None
     res = export_mod.export(a.run_dir, formats=fmts)
+    print(json.dumps(res, ensure_ascii=False, indent=2))
+
+
+
+def cmd_summarize(a):
+    res = summarize_mod.summarize(
+        a.run_dir,
+        out_dir=a.out,
+        target_seconds=a.target_seconds,
+        max_steps=a.max_steps,
+        max_segment_seconds=a.max_segment_seconds,
+    )
     print(json.dumps(res, ensure_ascii=False, indent=2))
 
 
@@ -131,6 +144,12 @@ def build_parser():
     sp = sub.add_parser("export"); sp.add_argument("run_dir")
     sp.add_argument("--formats", default=""); sp.set_defaults(fn=cmd_export)
     sp = sub.add_parser("validate"); sp.add_argument("run_dir"); sp.set_defaults(fn=cmd_validate)
+    sp = sub.add_parser("summarize"); sp.add_argument("run_dir")
+    sp.add_argument("--out", type=Path, default=None)
+    sp.add_argument("--target-seconds", type=int, default=75)
+    sp.add_argument("--max-steps", type=int, default=4)
+    sp.add_argument("--max-segment-seconds", type=float, default=8.0)
+    sp.set_defaults(fn=cmd_summarize)
     sp = sub.add_parser("doctor"); sp.set_defaults(fn=cmd_doctor)
     return p
 

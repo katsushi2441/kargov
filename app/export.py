@@ -56,38 +56,44 @@ def _build_scene_clips(run_dir: Path, scenes: list[dict], marks: list[dict],
     clips = []
     for i, s in enumerate(scenes):
         name = s["scene"]
-        start = by_name.get(name, 0.0)
+        start = min(max(float(by_name.get(name, 0.0)), 0.0), max(vdur - 0.1, 0.0))
         # 次シーンのmarkまで、無ければ動画末尾まで
         nxt = None
         for j in range(i + 1, len(scenes)):
             if scenes[j]["scene"] in by_name:
                 nxt = by_name[scenes[j]["scene"]]
                 break
-        end = nxt if nxt is not None else vdur
+        end = min(float(nxt) if nxt is not None else vdur, vdur)
+        if end <= start:
+            end = min(vdur, start + 0.2)
         seg = max(0.2, end - start)
         adur = float(s.get("audio_dur") or 0.0)
         target = max(seg, adur, 1.2)
         pad = max(0.0, target - seg)
 
-        # overlay テキストファイル
         clip = tmp / f"clip{i:03d}.mp4"
         ov = s.get("overlay")
-        vf = "scale=trunc(iw/2)*2:trunc(ih/2)*2"
+        vf_parts = [
+            f"trim=start={start:.3f}:duration={seg:.3f}",
+            "setpts=PTS-STARTPTS",
+            "scale=trunc(iw/2)*2:trunc(ih/2)*2",
+        ]
         if pad > 0.01:
-            vf = f"tpad=stop_mode=clone:stop_duration={pad:.3f}," + vf
+            vf_parts.append(f"tpad=stop_mode=clone:stop_duration={pad:.3f}")
         if ov and ov.get("text"):
             tf = tmp / f"ov{i:03d}.txt"
             tf.write_text(ov["text"])
-            vf += "," + _drawtext(ov, tf, fontsize=34)
+            vf_parts.append(_drawtext(ov, tf, fontsize=34))
+        vf = ",".join(vf_parts)
 
         audio = s.get("audio")
-        cmd = [config.FFMPEG_BIN, "-y", "-ss", f"{start:.3f}", "-t", f"{seg:.3f}", "-i", str(raw)]
+        cmd = [config.FFMPEG_BIN, "-y", "-i", str(raw)]
         if audio:
             cmd += ["-i", str(audio)]
-            filt = f"[0:v]{vf}[v];[1:a]apad[a]"
+            filt = f"[0:v]{vf}[v];[1:a]asetpts=PTS-STARTPTS,apad[a]"
         else:
             cmd += ["-f", "lavfi", "-t", f"{target:.3f}", "-i", "anullsrc=r=44100:cl=stereo"]
-            filt = f"[0:v]{vf}[v];[1:a]anull[a]"
+            filt = f"[0:v]{vf}[v];[1:a]asetpts=PTS-STARTPTS,anull[a]"
         cmd += [
             "-filter_complex", filt, "-map", "[v]", "-map", "[a]",
             "-t", f"{target:.3f}", "-r", str(CLIP_FPS),
@@ -104,17 +110,25 @@ def _concat(clips: list[Path], out: Path, tmp: Path):
     lst = tmp / "concat.txt"
     lst.write_text("\n".join(f"file '{c.resolve()}'" for c in clips) + "\n")
     subprocess.run([
-        config.FFMPEG_BIN, "-y", "-f", "concat", "-safe", "0", "-i", str(lst),
-        "-c", "copy", "-movflags", "+faststart", str(out),
+        config.FFMPEG_BIN, "-y", "-fflags", "+genpts",
+        "-f", "concat", "-safe", "0", "-i", str(lst),
+        "-vf", "setpts=PTS-STARTPTS",
+        "-af", "asetpts=PTS-STARTPTS",
+        "-r", str(CLIP_FPS),
+        "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-pix_fmt", "yuv420p",
+        "-c:a", "aac", "-ar", "44100", "-ac", "2",
+        "-movflags", "+faststart", str(out),
     ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
 
 
 def _reformat(master: Path, out: Path, w: int, h: int):
     """マスタを指定アスペクトに fit(レターボックス) して書き出し。"""
-    vf = (f"scale={w}:{h}:force_original_aspect_ratio=decrease,"
+    dur = max(_probe_dur(master), 0.1)
+    vf = ("tpad=stop_mode=clone:stop_duration=120,"
+          f"scale={w}:{h}:force_original_aspect_ratio=decrease,"
           f"pad={w}:{h}:(ow-iw)/2:(oh-ih)/2:color=black,setsar=1")
     subprocess.run([
-        config.FFMPEG_BIN, "-y", "-i", str(master), "-vf", vf,
+        config.FFMPEG_BIN, "-y", "-i", str(master), "-vf", vf, "-t", f"{dur:.3f}",
         "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-pix_fmt", "yuv420p",
         "-c:a", "aac", "-ar", "44100", "-movflags", "+faststart", str(out),
     ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
