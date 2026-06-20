@@ -4,12 +4,19 @@ __pycache__/
 .env
 .env.*
 !.env.sample
+
+# Local OSS/vendor checkouts used while developing integrations.
+argo/
+
+# Local runtime data and generated media.
 runs/
 output/
+assets/
 *.mp4
 *.mp3
 *.wav
 *.png
 *.jpg
 *.jpeg
+
 .DS_Store

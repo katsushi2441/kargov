@@ -1,15 +1,19 @@
-# Kurage Argo Video (kargov)
+# Kargov — Kurage Argo Video
 
-Browser-agent video automation pipeline for recording web app demos, tutorials,
-and narrated operation videos.
+`kargov` is a local-first demo/manual video generation product. It combines Kurage's browser-agent recording workflow with Argo-inspired scene alignment, subtitle overlays, transitions, and horizontal/vertical export ideas.
 
-`kargov` combines browser automation, Chrome DevTools Protocol screencast
-capture, scene manifests, TTS narration, subtitle overlays, and 16:9 / 9:16
-exports into a local-first video generation workflow.
+This repository is the product folder itself. Local data can live here during development, but Git only tracks the reusable logic and system code.
 
-This repository contains only reusable logic and system code. Generated runs,
-recordings, screenshots, customer data, cookies, API keys, and production
-outputs must stay outside the repository.
+## Structure
+
+```text
+kargov/
+  kargov/      reusable Python package and pipeline logic
+  argo/        optional local checkout of the upstream Argo OSS project, ignored by Git
+  runs/        generated recordings, screenshots, narration, and final videos, ignored by Git
+  assets/      local fonts or private media assets, ignored by Git
+  .venv/       local Python environment, ignored by Git
+```
 
 ## Pipeline
 
@@ -30,6 +34,16 @@ export
   ffmpeg aligns scenes to narration, burns captions, exports 16:9 and 9:16
 ```
 
+## Argo Integration Policy
+
+The `argo/` directory is intentionally ignored. Use it as a local reference or vendor checkout while developing integrations, for example:
+
+```bash
+git clone https://github.com/shreyaskarnik/argo argo
+```
+
+Code that becomes part of `kargov` should be implemented in the `kargov/` package with clear attribution when needed. Generated data, copied experiments, and upstream working trees should stay out of this repository history.
+
 ## Install
 
 ```bash
@@ -48,7 +62,7 @@ System dependencies:
 
 ```bash
 kargov pipeline \
-  --task "Open the demo page and explain the main workflow" \
+  --task "Open the target page and explain the main workflow" \
   --url "https://example.com" \
   --intro "This is an automated product demo" \
   --outro "Thanks for watching" \
@@ -76,14 +90,14 @@ Environment variables:
 
 Do not commit:
 
+- `argo/` upstream checkout
 - `runs/` outputs
 - cookies or browser profiles
 - generated videos/audio/screenshots
 - customer URLs or credentials
+- local fonts or private media assets
 - `.env` files
 
 ## Relationship to Kurage
 
-`kargov` is the reusable browser/video automation engine. Application-specific
-content workflows can call it from private repositories or from a content engine
-such as `kcengine`.
+`kargov` is the reusable browser/video automation engine. Application-specific workflows can call it from private systems or from a content engine such as `kcengine`.

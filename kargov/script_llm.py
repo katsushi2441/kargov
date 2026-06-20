@@ -25,9 +25,8 @@ def resolve_claude_bin() -> str:
     found = shutil.which("claude")
     if found:
         candidates.append(found)
-    home = str(Path.home())
     versioned = sorted(glob.glob(
-        home + "/.vscode-server/extensions/"
+        str(Path.home()) + "/.vscode-server/extensions/"
         "anthropic.claude-code-*/resources/native-binary/claude"))
     candidates.extend(reversed(versioned))   # 新しいバージョン優先
     for p in candidates:
