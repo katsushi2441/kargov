@@ -20,8 +20,8 @@ dependencies = [
 dev = ["pytest>=8.0", "ruff>=0.5"]
 
 [project.scripts]
-kargov = "kargov.cli:main"
+kargov = "app.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["kargov*"]
+include = ["app*"]

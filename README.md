@@ -8,7 +8,7 @@ This repository is the product folder itself. Local data can live here during de
 
 ```text
 kargov/
-  kargov/      reusable Python package and pipeline logic
+  app/         reusable Python package and pipeline logic
   argo/        optional local checkout of the upstream Argo OSS project, ignored by Git
   runs/        generated recordings, screenshots, narration, and final videos, ignored by Git
   assets/      local fonts or private media assets, ignored by Git
@@ -42,7 +42,7 @@ The `argo/` directory is intentionally ignored. Use it as a local reference or v
 git clone https://github.com/shreyaskarnik/argo argo
 ```
 
-Code that becomes part of `kargov` should be implemented in the `kargov/` package with clear attribution when needed. Generated data, copied experiments, and upstream working trees should stay out of this repository history.
+Code that becomes part of `kargov` should be implemented in the `app/` package with clear attribution when needed. Generated data, copied experiments, and upstream working trees should stay out of this repository history.
 
 ## Install
 
