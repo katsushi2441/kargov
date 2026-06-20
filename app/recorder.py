@@ -100,10 +100,11 @@ class ScreencastRecorder:
             if i < len(frames) - 1:
                 dur = max(0.02, self.frame_times[i + 1] - self.frame_times[i])
                 lines.append(f"duration {dur:.3f}")
-        (self.frames_dir / "list.txt").write_text("\n".join(lines) + "\n")
+        list_path = (self.frames_dir / "list.txt").resolve()
+        list_path.write_text("\n".join(lines) + "\n")
         subprocess.run([
             config.FFMPEG_BIN, "-y", "-f", "concat", "-safe", "0",
-            "-i", str(self.frames_dir / "list.txt"),
+            "-i", str(list_path),
             "-vf", "scale=trunc(iw/2)*2:trunc(ih/2)*2",
             "-vsync", "vfr", "-pix_fmt", "yuv420p", "-movflags", "+faststart",
             str(Path(mp4_path).resolve()),
