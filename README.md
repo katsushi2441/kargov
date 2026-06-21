@@ -52,6 +52,11 @@ For product demos, especially kvtuber live demos:
 
 If the real workflow is broken, fix the workflow or state the blocker. Do not replace it with a simulated or cosmetic video.
 
+The verified kvtuber live demo procedure is documented in
+[`docs/kvtuber-live-demo-success.md`](docs/kvtuber-live-demo-success.md).
+Use that procedure for `dd456c7c59e34fe5`-style replacements instead of
+re-discovering the Chrome, TTS, PulseAudio, and ffmpeg sequence.
+
 ## Argo Inspiration
 
 Argo was used as a design reference, not as a fork or copied codebase. `kargov` is a Python implementation built around the existing Kurage/browser-agent recording workflow. The Argo-inspired ideas are scene marks, narration alignment, subtitle overlays, and horizontal/vertical exports.
