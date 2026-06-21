@@ -68,7 +68,8 @@ def _build_scene_clips(run_dir: Path, scenes: list[dict], marks: list[dict],
             end = min(vdur, start + 0.2)
         seg = max(0.2, end - start)
         adur = float(s.get("audio_dur") or 0.0)
-        target = max(seg, adur, 1.2)
+        use_original_audio = s.get("audio_source") == "original"
+        target = max(seg, 1.2) if use_original_audio else max(seg, adur, 1.2)
         pad = max(0.0, target - seg)
 
         clip = tmp / f"clip{i:03d}.mp4"
@@ -88,7 +89,13 @@ def _build_scene_clips(run_dir: Path, scenes: list[dict], marks: list[dict],
 
         audio = s.get("audio")
         cmd = [config.FFMPEG_BIN, "-y", "-i", str(raw)]
-        if audio:
+        if use_original_audio:
+            filt = (
+                f"[0:v]{vf}[v];"
+                f"[0:a]atrim=start={start:.3f}:duration={seg:.3f},"
+                "asetpts=PTS-STARTPTS,apad[a]"
+            )
+        elif audio:
             cmd += ["-i", str(audio)]
             filt = f"[0:v]{vf}[v];[1:a]asetpts=PTS-STARTPTS,apad[a]"
         else:

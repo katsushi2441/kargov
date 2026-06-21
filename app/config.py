@@ -17,6 +17,11 @@ REC_WIDTH = int(os.environ.get("KARGOV_W", "1280"))
 REC_HEIGHT = int(os.environ.get("KARGOV_H", "720"))
 SCREENCAST_QUALITY = int(os.environ.get("KARGOV_JPEG_Q", "80"))
 
+# --- AV録画 (Xvfb + Pulse + ffmpeg) ---
+AV_DISPLAY = os.environ.get("KARGOV_AV_DISPLAY", ":97")
+AV_FPS = int(os.environ.get("KARGOV_AV_FPS", "15"))
+AV_PULSE_SINK = os.environ.get("KARGOV_AV_PULSE_SINK", "kurage_live")
+
 # --- LLM (ローカル Ollama) ---
 OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://127.0.0.1:11434")
 OLLAMA_MODEL = os.environ.get("KARGOV_MODEL", "gemma4:12b-it-qat")

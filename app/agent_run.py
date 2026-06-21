@@ -14,6 +14,7 @@ from browser_use import Agent, BrowserProfile, ChatOllama
 
 from . import config, chrome, scenes as scenes_mod
 from .recorder import ScreencastRecorder
+from .recorder_av import AVRecorder
 
 
 def _summarize_step(step_idx: int, model_output) -> tuple[str, str]:
@@ -35,19 +36,27 @@ def _summarize_step(step_idx: int, model_output) -> tuple[str, str]:
 
 async def run(task: str, url: str = "", out: Path = None,
               steps: int = 20, cookies: list[dict] | None = None,
-              headless: bool = True, intro: str = "", outro: str = "") -> dict:
+              headless: bool = True, intro: str = "", outro: str = "",
+              audio: bool = False) -> dict:
     out = Path(out or (config.RUNS_DIR / ("run_" + time.strftime("%Y%m%d_%H%M%S"))))
     out.mkdir(parents=True, exist_ok=True)
     port = config.DEBUG_PORT
 
-    proc = chrome.launch(port, headless=headless)
+    rec = None
+    if audio:
+        rec = AVRecorder(port, out)
+        proc = rec.start(url or "about:blank")
+        headless = False
+    else:
+        proc = chrome.launch(port, headless=headless)
     try:
         await asyncio.sleep(3)
         if cookies:
             await chrome.set_cookies(port, cookies)
 
-        rec = ScreencastRecorder(port, out)
-        rec.start()
+        if rec is None:
+            rec = ScreencastRecorder(port, out)
+            rec.start()
         await asyncio.sleep(0.5)
 
         draft: list[dict] = []
@@ -87,7 +96,7 @@ async def run(task: str, url: str = "", out: Path = None,
         llm = ChatOllama(model=config.OLLAMA_MODEL, host=config.OLLAMA_HOST,
                          timeout=config.OLLAMA_TIMEOUT)
         profile = BrowserProfile(cdp_url=f"http://127.0.0.1:{port}", headless=headless)
-        full_task = task if not url else f"まず {url} を開いてください。\n{task}"
+        full_task = task if (audio or not url) else f"まず {url} を開いてください。\n{task}"
         agent = Agent(task=full_task, llm=llm, browser_profile=profile,
                       max_actions_per_step=3)
         history = await agent.run(max_steps=steps, on_step_end=on_step_end)
@@ -111,4 +120,7 @@ async def run(task: str, url: str = "", out: Path = None,
                 "marks": rec.marks, "n_frames": len(rec.frame_times),
                 "duration": rec.duration}
     finally:
-        proc.terminate()
+        if hasattr(rec, "close"):
+            rec.close()
+        else:
+            proc.terminate()

@@ -30,7 +30,8 @@ def cmd_record(a):
     cookies = _parse_cookies(a.cookie)
     res = asyncio.run(agent_run.run(
         task=a.task, url=a.url, out=a.out, steps=a.steps,
-        cookies=cookies, headless=not a.headful, intro=a.intro, outro=a.outro))
+        cookies=cookies, headless=not a.headful, intro=a.intro, outro=a.outro,
+        audio=a.audio))
     print(json.dumps(res, ensure_ascii=False, indent=2))
     return res
 
@@ -129,6 +130,8 @@ def build_parser():
         sp.add_argument("--cookie", action="append", default=[],
                         help="NAME=VALUE@domain （複数可）")
         sp.add_argument("--headful", action="store_true")
+        sp.add_argument("--audio", action="store_true",
+                        help="Xvfb+Pulse+ffmpegでブラウザ音声込み録画を行う")
         sp.add_argument("--intro", default="")
         sp.add_argument("--outro", default="")
         sp.add_argument("--formats", default="")

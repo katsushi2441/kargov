@@ -36,6 +36,9 @@ async def synth(run_dir: Path) -> dict:
     scenes = scenes_mod.load(run_dir / "scenes.json")
 
     for i, s in enumerate(scenes):
+        if s.get("audio_source") == "original":
+            s["audio"], s["audio_dur"] = None, 0.0
+            continue
         text = (s.get("text") or "").strip()
         if not text:
             s["audio"], s["audio_dur"] = None, 0.0
