@@ -36,6 +36,22 @@ export
   ffmpeg aligns scenes to narration, burns captions, exports 16:9 and 9:16
 ```
 
+## Quality Rule: No Fake Demo Videos
+
+kargov must not produce fake, rushed, or placeholder-quality demos.
+
+For product demos, especially kvtuber live demos:
+
+- record the real browser operation when the video claims browser operation
+- click the real admin UI when the video claims an admin button was clicked
+- capture the real viewer output when the video claims live viewer playback
+- preserve original seminar/viewer audio during the seminar section
+- use narration only before/after or around the live section, never over the seminar audio
+- avoid empty sample text, fake screens, silent captures, or low-quality filler
+- verify the final MP4 with ffprobe/ffmpeg and by visual review before publishing
+
+If the real workflow is broken, fix the workflow or state the blocker. Do not replace it with a simulated or cosmetic video.
+
 ## Argo Inspiration
 
 Argo was used as a design reference, not as a fork or copied codebase. `kargov` is a Python implementation built around the existing Kurage/browser-agent recording workflow. The Argo-inspired ideas are scene marks, narration alignment, subtitle overlays, and horizontal/vertical exports.
