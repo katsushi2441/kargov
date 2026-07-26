@@ -1,0 +1,56 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><style>
+*{margin:0;padding:0;box-sizing:border-box}
+.stage{position:relative;width:1200px;height:630px;overflow:hidden;font-family:"Noto Sans CJK JP",sans-serif;color:#e9f7f1;
+ background:radial-gradient(860px 520px at 88% -10%,rgba(52,211,153,.18),transparent 60%),
+ radial-gradient(720px 560px at -8% 112%,rgba(16,185,129,.12),transparent 55%),
+ linear-gradient(135deg,#0a1f1a 0%,#0e2b26 55%,#123a2e 100%)}
+.left{position:absolute;left:66px;top:52px;width:640px}
+.eyebrow{display:inline-flex;align-items:center;gap:11px;font-size:21px;font-weight:800;letter-spacing:.12em;color:#6ee7b7;text-transform:uppercase}
+.dot{width:12px;height:12px;border-radius:50%;background:#34d399;box-shadow:0 0 16px #34d399}
+h1{font-size:86px;line-height:1.02;font-weight:900;letter-spacing:-.02em;margin:12px 0 0}
+h1 .g{background:linear-gradient(90deg,#6ee7b7,#38bdf8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{font-size:29px;font-weight:700;color:#c8e6da;margin-top:20px;line-height:1.5}
+.chips{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
+.chip{background:rgba(255,255,255,.07);border:1.5px solid rgba(110,231,183,.35);border-radius:15px;padding:11px 17px;font-size:21px;font-weight:800}
+.chip b{color:#6ee7b7}
+.foot{position:absolute;left:66px;bottom:42px;display:flex;align-items:center;gap:14px;font-size:26px;color:#a8c8bb}
+.foot .url{font-weight:800;color:#e9f7f1}.jelly{font-size:38px}
+.right{position:absolute;right:58px;top:86px;width:400px}
+.browser{background:#0b1220;border:1.5px solid rgba(110,231,183,.4);border-radius:16px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.45)}
+.bbar{display:flex;align-items:center;gap:8px;background:#101a2e;padding:10px 12px}
+.bdot{width:12px;height:12px;border-radius:50%}
+.addr{flex:1;background:#0b1220;border:1px solid rgba(255,255,255,.12);border-radius:8px;color:#9fc0b3;font-size:14px;padding:4px 10px}
+.rec{display:flex;align-items:center;gap:6px;color:#ff6b6b;font-size:14px;font-weight:900}
+.rdot{width:10px;height:10px;border-radius:50%;background:#ff5252;box-shadow:0 0 10px #ff5252}
+.page{padding:16px;position:relative;height:190px}
+.ln{height:12px;border-radius:6px;background:rgba(255,255,255,.14);margin-bottom:10px}
+.btnm{width:130px;height:34px;border-radius:8px;background:#34d399;margin-top:8px;display:flex;align-items:center;justify-content:center;color:#06301f;font-weight:900;font-size:15px}
+.cursor{position:absolute;right:120px;bottom:34px;font-size:30px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.6))}
+.timeline{display:flex;gap:6px;margin-top:14px}
+.tl{height:34px;border-radius:6px;flex:1;background:rgba(110,231,183,.25);border:1px solid rgba(110,231,183,.4)}
+.tl.b{background:rgba(56,189,248,.25);border-color:rgba(56,189,248,.45)}
+</style></head><body><div class="stage">
+<div class="left">
+ <span class="eyebrow"><span class="dot"></span>BROWSER AGENT ・ AUTO DEMO VIDEO</span>
+ <h1>Kurage <span class="g">Argo</span> Video</h1>
+ <div class="sub">AIがブラウザを操作した記録から、<br>デモ・マニュアル動画を自動生成。</div>
+ <div class="chips">
+  <div class="chip">🖱️ 操作を<b>そのまま録画</b></div>
+  <div class="chip">✂️ シーン整列・<b>字幕</b></div>
+  <div class="chip">📱 横/縦<b>書き出し</b></div>
+ </div>
+</div>
+<div class="foot"><span class="jelly">🪼</span><span class="url">github.com/katsushi2441/kargov</span></div>
+<div class="right">
+ <div class="browser">
+  <div class="bbar"><span class="bdot" style="background:#ff5f57"></span><span class="bdot" style="background:#febc2e"></span><span class="bdot" style="background:#28c840"></span>
+   <span class="addr">https://your-app.example</span><span class="rec"><span class="rdot"></span>REC</span></div>
+  <div class="page">
+   <div class="ln" style="width:78%"></div><div class="ln" style="width:60%"></div><div class="ln" style="width:70%"></div>
+   <div class="btnm">クリック！</div>
+   <div class="cursor">🖱️</div>
+  </div>
+ </div>
+ <div class="timeline"><div class="tl"></div><div class="tl b"></div><div class="tl"></div><div class="tl b"></div><div class="tl"></div></div>
+</div>
+</div></body></html>
